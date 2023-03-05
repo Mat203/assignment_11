@@ -1,0 +1,15 @@
+C:\Users\User\Desktop\Информатика\assignment_11\bin\Debug\net7.0\assignment_11.exe
+C:\Users\User\Desktop\Информатика\assignment_11\bin\Debug\net7.0\assignment_11.deps.json
+C:\Users\User\Desktop\Информатика\assignment_11\bin\Debug\net7.0\assignment_11.runtimeconfig.json
+C:\Users\User\Desktop\Информатика\assignment_11\bin\Debug\net7.0\assignment_11.dll
+C:\Users\User\Desktop\Информатика\assignment_11\bin\Debug\net7.0\assignment_11.pdb
+C:\Users\User\Desktop\Информатика\assignment_11\obj\Debug\net7.0\assignment_11.csproj.AssemblyReference.cache
+C:\Users\User\Desktop\Информатика\assignment_11\obj\Debug\net7.0\assignment_11.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\User\Desktop\Информатика\assignment_11\obj\Debug\net7.0\assignment_11.AssemblyInfoInputs.cache
+C:\Users\User\Desktop\Информатика\assignment_11\obj\Debug\net7.0\assignment_11.AssemblyInfo.cs
+C:\Users\User\Desktop\Информатика\assignment_11\obj\Debug\net7.0\assignment_11.csproj.CoreCompileInputs.cache
+C:\Users\User\Desktop\Информатика\assignment_11\obj\Debug\net7.0\assignment_11.dll
+C:\Users\User\Desktop\Информатика\assignment_11\obj\Debug\net7.0\refint\assignment_11.dll
+C:\Users\User\Desktop\Информатика\assignment_11\obj\Debug\net7.0\assignment_11.pdb
+C:\Users\User\Desktop\Информатика\assignment_11\obj\Debug\net7.0\assignment_11.genruntimeconfig.cache
+C:\Users\User\Desktop\Информатика\assignment_11\obj\Debug\net7.0\ref\assignment_11.dll

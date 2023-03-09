@@ -32,94 +32,92 @@ bool IsWall(string c)
 {
     return c == "█";
 }
-List<Point> Neighbours(string[,] map, Point p)
+List<Point> GetNeighbours(int row, int column, string[,] maze)
 {
-    List<Point> result = new List<Point>();
+     var result = new List<Point>();
+     TryAddWithOffset(1, 0);
+     TryAddWithOffset(-1, 0);
+     TryAddWithOffset(0, 1);
+     TryAddWithOffset(0, -1);
+     return result;
 
-    int x = p.Column;
-    int y = p.Row;
-
-    if (y++ < map.GetLength(1) && y++ >= 0 && x < map.GetLength(0) && x >= 0 && !IsWall(map[x, y++]))
-    {
-        result.Add(new Point(x,y++));
-    }
-    if (y-- < map.GetLength(1) && y-- >= 0 && x < map.GetLength(0) && x >= 0 && !IsWall(map[x, y++]))
-    {
-        result.Add(new Point(x,y--));
-        
-    }if (y < map.GetLength(1) && y >= 0 && x++ < map.GetLength(0) && x++ >= 0 && !IsWall(map[x, y++]))
-    {
-        result.Add(new Point(x++,y));
-    }if (y < map.GetLength(0) && y >= 0 && x-- < map.GetLength(0) && x-- >= 0 && !IsWall(map[x, y++]))
-    {
-        result.Add(new Point(x--,y));
-    }
-
-    return result;
+     void TryAddWithOffset(int offsetRow, int offsetColumn)
+     {
+         var newX = row + offsetRow;
+         var newY = column + offsetColumn;
+         if (newX >= 0 && newY >= 0 && newX < maze.GetLength(0) && newY < maze.GetLength(1) && maze[newX, newY] != "#")
+         {
+             result.Add(new Point(newY, newX));
+         }
+     }
 }
 
-List<Point> SearchBFS(string[,] map,Point start, Point end)
+List<Point> SearchDijkstra(string[,] map, Point start, Point end)
 {
-    var frontier = new Queue<Point>();
-    Dictionary<Point, Point?> cameFrom = new Dictionary<Point, Point?>();
-    
-    cameFrom.Add(start, null);
-    frontier.Enqueue(start);
+    PriorityQueue<Point, int> frontier = new PriorityQueue<Point, int>();
+    Dictionary<Point, Point?> CameFrom = new Dictionary<Point, Point?>();
+    Dictionary<Point, int> Cost_So_Far = new Dictionary<Point, int>();
+    CameFrom.Add(start, null);
+    Cost_So_Far.Add(start, 0);
+    frontier.Enqueue(start, 0);
 
     while (frontier.Count > 0)
     {
-        var cur = frontier.Dequeue();
+        Point cur = frontier.Dequeue();
         
+
         if (IsEqual(cur, end))
         {
             break;
         }
 
-        foreach (Point neighbour in Neighbours(map, cur))
+        foreach (Point neighbour in GetNeighbours(cur.Row, cur.Column, map))
         {
-            if (!cameFrom.TryGetValue(neighbour, out _))
+            int new_cost = Cost_So_Far[cur] + 1;
+            if (!Cost_So_Far.TryGetValue(neighbour, out _) || new_cost < Cost_So_Far[neighbour])
             {
-                cameFrom.Add(neighbour, cur);
-                frontier.Enqueue(neighbour);
-            } 
+                Cost_So_Far[neighbour] = new_cost;
+                int priority = new_cost;
+                CameFrom.Add(neighbour, cur);
+                frontier.Enqueue(neighbour, priority);
+
+            }
         }
     }
-
     List<Point> path = new List<Point>();
 
+    foreach (Point p in path)
+    {
+        Console.WriteLine(p.Column);
+        Console.WriteLine(p.Row);
+    }
+
     Point? current = end;
-    while (IsEqual(current.Value, start))
+    while (!IsEqual(current.Value, start))
     {
         path.Add(current.Value);
-        cameFrom.TryGetValue(current.Value, out current);
+        CameFrom.TryGetValue(current.Value, out current);
     }
     path.Add(start);
-
     path.Reverse();
     return path;
-
 }
 
-;
 
 var generator = new MapGenerator(new MapGeneratorOptions()
 {
     Height = 10,
     Width = 15,
+    Seed = 1
 });
 
 string[,] map = generator.Generate();
 
-List<Point> path = new List<Point>(new Point[]
-{
-    new Point(0,0),
-    new Point(0,1),
-    new Point(0,2),
-    new Point(0,3)
-});
+Point start = new Point(0,0);
+Point end = new Point(5,8);
+
+List<Point> path = SearchDijkstra(map, start, end);
 
 PrintMap(map, path);
 
 
-
-pri

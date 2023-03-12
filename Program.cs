@@ -12,6 +12,8 @@ void PrintMap(string[,] map, List<Point> path)
 
     foreach (Point p in path)
     {
+        Console.Write(p.Column);
+        Console.WriteLine(p.Row);
         if (IsEqual(p, start))
         {
             map[p.Column, p.Row] = "A";
@@ -45,7 +47,7 @@ List<Point> GetNeighbours(int row, int column, string[,] maze)
      {
          var newX = row + offsetRow;
          var newY = column + offsetColumn;
-         if (newX >= 0 && newY >= 0 && newX < maze.GetLength(0) && newY < maze.GetLength(1) && maze[newX, newY] != "#")
+         if (newX >= 0 && newY >= 0 && newX < maze.GetLength(0) && newY < maze.GetLength(1) && maze[newX, newY] != "█")
          {
              result.Add(new Point(newY, newX));
          }
@@ -73,7 +75,9 @@ List<Point> SearchDijkstra(string[,] map, Point start, Point end)
 
         foreach (Point neighbour in GetNeighbours(cur.Row, cur.Column, map))
         {
-            int new_cost = Cost_So_Far[cur] + 1;
+            int speed_point = Int32.Parse(map[neighbour.Row, neighbour.Column]);
+            int speed = 60-(speed_point-1)*6;
+            int new_cost = Cost_So_Far[cur] + speed;
             if (!Cost_So_Far.TryGetValue(neighbour, out _) || new_cost < Cost_So_Far[neighbour])
             {
                 Cost_So_Far[neighbour] = new_cost;
@@ -98,26 +102,27 @@ List<Point> SearchDijkstra(string[,] map, Point start, Point end)
         path.Add(current.Value);
         CameFrom.TryGetValue(current.Value, out current);
     }
-    path.Add(start);
-    path.Reverse();
+    // path.Add(start);
+    // path.Reverse();
     return path;
 }
 
 
 var generator = new MapGenerator(new MapGeneratorOptions()
 {
-    Height = 10,
-    Width = 15,
-    Seed = 1
+    Height = 20,
+    Width = 20,
+    Seed = 1,
+    AddTraffic = true
 });
 
 string[,] map = generator.Generate();
 
 Point start = new Point(0,0);
-Point end = new Point(5,8);
+Point end = new Point(18,18);
 
 List<Point> path = SearchDijkstra(map, start, end);
 
-PrintMap(map, path);
+PrintMap(map,path);
 
 

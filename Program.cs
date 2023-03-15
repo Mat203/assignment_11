@@ -12,8 +12,6 @@ void PrintMap(string[,] map, List<Point> path)
 
     foreach (Point p in path)
     {
-        Console.Write(p.Column);
-        Console.WriteLine(p.Row);
         if (IsEqual(p, start))
         {
             map[p.Column, p.Row] = "A";
@@ -34,24 +32,31 @@ bool IsWall(string c)
 {
     return c == "█";
 }
-List<Point> GetNeighbours(int row, int column, string[,] maze)
+List<Point> Neighbours(string[,] map, Point p)
 {
-     var result = new List<Point>();
-     TryAddWithOffset(1, 0);
-     TryAddWithOffset(-1, 0);
-     TryAddWithOffset(0, 1);
-     TryAddWithOffset(0, -1);
-     return result;
+    List<Point> result = new List<Point>();
 
-     void TryAddWithOffset(int offsetRow, int offsetColumn)
-     {
-         var newX = row + offsetRow;
-         var newY = column + offsetColumn;
-         if (newX >= 0 && newY >= 0 && newX < maze.GetLength(0) && newY < maze.GetLength(1) && maze[newX, newY] != "█")
-         {
-             result.Add(new Point(newY, newX));
-         }
-     }
+    int px = p.Column;
+    int py = p.Row;
+
+    if (py + 1 < map.GetLength(0) && py + 1 >= 0 && px < map.GetLength(1) && px >= 0 && !IsWall(map[px, py + 1]))
+    {
+        result.Add(new Point(px,py+1));
+    }
+    if (py - 1 < map.GetLength(0) && py - 1 >= 0 && px < map.GetLength(1) && px >= 0 && !IsWall(map[px, py - 1]))
+    {
+        result.Add(new Point(px,py-1));
+    }
+    if (py < map.GetLength(0) && py >= 0 && px+1 < map.GetLength(1) && px+1 >= 0 && !IsWall(map[px+1, py]))
+    {
+        result.Add(new Point(px+1,py));
+    }
+    
+    if (py < map.GetLength(0) && py >= 0 && px-1 < map.GetLength(1) && px-1 >= 0 && !IsWall(map[px-1, py]))
+    {
+        result.Add(new Point(px-1,py));
+    }
+    return result;
 }
 
 List<Point> SearchDijkstra(string[,] map, Point start, Point end)
@@ -62,6 +67,7 @@ List<Point> SearchDijkstra(string[,] map, Point start, Point end)
     CameFrom.Add(start, null);
     Cost_So_Far.Add(start, 0);
     frontier.Enqueue(start, 0);
+    double time = 0;
 
     while (frontier.Count > 0)
     {
@@ -73,14 +79,15 @@ List<Point> SearchDijkstra(string[,] map, Point start, Point end)
             break;
         }
 
-        foreach (Point neighbour in GetNeighbours(cur.Row, cur.Column, map))
+        foreach (Point neighbour in Neighbours(map, cur))
         {
-            int speed_point = Int32.Parse(map[neighbour.Row, neighbour.Column]);
+            int speed_point = Int32.Parse(map[neighbour.Column, neighbour.Row]);
             int speed = 60-(speed_point-1)*6;
             int new_cost = Cost_So_Far[cur] + speed;
             if (!Cost_So_Far.TryGetValue(neighbour, out _) || new_cost < Cost_So_Far[neighbour])
             {
                 Cost_So_Far[neighbour] = new_cost;
+                time += 10/Convert.ToDouble(speed);
                 int priority = new_cost;
                 CameFrom.Add(neighbour, cur);
                 frontier.Enqueue(neighbour, priority);
@@ -90,11 +97,6 @@ List<Point> SearchDijkstra(string[,] map, Point start, Point end)
     }
     List<Point> path = new List<Point>();
 
-    foreach (Point p in path)
-    {
-        Console.WriteLine(p.Column);
-        Console.WriteLine(p.Row);
-    }
 
     Point? current = end;
     while (!IsEqual(current.Value, start))
@@ -102,8 +104,11 @@ List<Point> SearchDijkstra(string[,] map, Point start, Point end)
         path.Add(current.Value);
         CameFrom.TryGetValue(current.Value, out current);
     }
-    // path.Add(start);
-    // path.Reverse();
+    path.Add(start);
+    path.Reverse();
+    Console.Write("Загальний час - ");
+    Console.Write(Math.Round(time));
+    Console.WriteLine(" хв");
     return path;
 }
 
@@ -119,10 +124,16 @@ var generator = new MapGenerator(new MapGeneratorOptions()
 string[,] map = generator.Generate();
 
 Point start = new Point(0,0);
-Point end = new Point(18,18);
+Point end = new Point(0,4);
 
 List<Point> path = SearchDijkstra(map, start, end);
-
+List<Point> path1 = new List<Point>(new Point[]
+{
+    new Point(0,0),
+    new Point(0,1),
+    new Point(0,2),
+    new Point(0,3)
+});
 PrintMap(map,path);
 
 
